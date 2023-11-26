@@ -1,10 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerDancing : MonoBehaviour
 {
     private Animator anim;
+    [SerializeField]
+    private GameObject panelDances;
+
+    private float timeDance;
 
     // Start is called before the first frame update
     void Start()
@@ -16,23 +21,50 @@ public class PlayerDancing : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        DancingTwerk();
-        HeadSpinning();
+        // DancingTwerk();
+        // HeadSpinning();
+        OpenPainelDance();
     }
 
-    void DancingTwerk()
+    public void Dancing(string nameDance)
     {
         if (!anim.GetBool("walking"))
         {
-            if(Input.GetKeyDown(KeyCode.Alpha1))
+            // se tiver mais colocar um switch case
+            if(nameDance == "spinHead")
             {
-                anim.SetTrigger("isDancingTwerk");
-                anim.SetBool("dancing-twerk", true);
-                Invoke("FinishDancingTwerk", 15f);
+                HeadSpinning();
+            } else
+            {
+                anim.SetTrigger(nameDance);
+                anim.SetBool("isDancing", true);
+                Invoke("FinishDancing", timeDance);
             }
+
+            panelDances.SetActive(false);
+            Cursor.visible = false;
         } else
         {
-            anim.SetBool("dancing-twerk", false);
+            anim.SetBool("isDancing", false);
+        }
+    }
+
+    public void TimeFinishDance(float timeDance)
+    {
+        this.timeDance = timeDance;
+    }
+
+    void OpenPainelDance()
+    {
+        if (Input.GetKeyDown(KeyCode.Tab))
+        {
+            panelDances.SetActive(true);
+            Cursor.visible = true;
+        }
+        if (Input.GetKeyUp(KeyCode.Tab))
+        {
+            panelDances.SetActive(false);
+            Cursor.visible = false;
         }
     }
 
@@ -64,15 +96,12 @@ public class PlayerDancing : MonoBehaviour
     {
         if (!anim.GetBool("walking"))
         {
-            if (Input.GetKeyDown(KeyCode.Alpha2))
-            {
-                StartCoroutine(SpinHeadAfterDelay(0.25f));
-            }
+            StartCoroutine(SpinHeadAfterDelay(0.25f));
         }
     }
 
-    private void FinishDancingTwerk()
+    private void FinishDancing()
     {
-        anim.SetBool("dancing-twerk", false);
+        anim.SetBool("isDancing", false);
     }
 }
